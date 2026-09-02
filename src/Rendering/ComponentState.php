@@ -21,9 +21,9 @@ final readonly class ComponentState
      */
     private function __construct(
         public ComponentMetadata $component,
-        public ?string           $storyId,
-        public array             $props,
-        public array             $slots,
+        public ?string $storyId,
+        public array $props,
+        public array $slots,
     ) {}
 
     /**

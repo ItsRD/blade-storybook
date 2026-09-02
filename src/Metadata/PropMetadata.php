@@ -11,15 +11,15 @@ final readonly class PropMetadata
      * @param  string|null  $unsupportedReason  Set when the value cannot be expressed as a literal, such as a model or a collection.
      */
     public function __construct(
-        public string      $name,
-        public string      $attributeName,
-        public string      $type,
-        public bool        $hasDefault,
-        public mixed       $default,
-        public ?array      $options,
-        public ?string     $description,
+        public string $name,
+        public string $attributeName,
+        public string $type,
+        public bool $hasDefault,
+        public mixed $default,
+        public ?array $options,
+        public ?string $description,
         public ControlType $control,
-        public ?string     $unsupportedReason = null,
+        public ?string $unsupportedReason = null,
     ) {}
 
     /**

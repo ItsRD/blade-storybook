@@ -16,15 +16,15 @@ final readonly class ComponentMetadata
      * @param  list<SlotMetadata>  $slots
      */
     public function __construct(
-        public string  $class,
-        public string  $tag,
-        public string  $name,
-        public string  $category,
+        public string $class,
+        public string $tag,
+        public string $name,
+        public string $category,
         public ?string $description,
-        public array   $props,
-        public array   $unmanagedProps,
-        public array   $stories,
-        public array   $slots,
+        public array $props,
+        public array $unmanagedProps,
+        public array $stories,
+        public array $slots,
     ) {}
 
     /**
