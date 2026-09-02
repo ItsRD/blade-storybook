@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use ItsRD\BladeStorybook\Facades\Storybook;
+use ItsRD\BladeStorybook\Metadata\ComponentMetadata;
 use ItsRD\BladeStorybook\Metadata\ControlType;
 use ItsRD\BladeStorybook\Rendering\ComponentState;
+use ItsRD\BladeStorybook\StorybookRegistry;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureButton;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureCard;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\PlainComponent;
@@ -106,4 +108,12 @@ it('keeps a nullable prop null when its control is cleared', function (): void {
     expect($component->prop('href')->isNullable())->toBeTrue()
         ->and($state->props['href'])->toBeNull()
         ->and($state->changedProps())->not->toHaveKey('href');
+});
+
+it('sorts components by category and then by name', function (): void {
+    expect(app(StorybookRegistry::class)->all()
+        ->map(fn (ComponentMetadata $component): string => $component->category.'/'.$component->name)
+        ->values()
+        ->all()
+    )->toBe(['Cards/Fixture Card', 'Forms/Fixture button']);
 });

@@ -70,8 +70,8 @@ final class StorybookRegistry
             ->map(fn (string $class): ?ComponentMetadata => $this->componentParser->parse($class))
             ->filter()
             ->sortBy([
-                fn (ComponentMetadata $component): string => $component->category,
-                fn (ComponentMetadata $component): string => $component->name,
+                ['category', 'asc'],
+                ['name', 'asc'],
             ])
             ->keyBy(fn (ComponentMetadata $component): string => $component->id());
     }

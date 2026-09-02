@@ -8,12 +8,14 @@ use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureCard;
 it('shows the first component when none is selected', function (): void {
     $this->get(route('blade-storybook.index'))
         ->assertOk()
-        ->assertSee('Fixture button')
-        ->assertSee('&lt;x-fixture-button&gt;', false);
+        ->assertSee('Fixture Card')
+        ->assertSee('&lt;x-fixture-card&gt;', false);
 });
 
 it('names the constructor parameters that are missing the prop attribute', function (): void {
-    $this->get(route('blade-storybook.index'))
+    $this->get(route('blade-storybook.index', [
+        'component' => str_replace('\\', '.', FixtureButton::class),
+    ]))
         ->assertOk()
         ->assertSee('meta, internal');
 });
