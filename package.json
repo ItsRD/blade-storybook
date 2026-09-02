@@ -1,0 +1,16 @@
+{
+    "name": "blade-storybook",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "npm run build:css && npm run build:js",
+        "build:css": "tailwindcss -i resources/css/storybook.css -o resources/dist/storybook.css --minify",
+        "build:js": "esbuild resources/js/storybook.js --bundle --minify --format=iife --outfile=resources/dist/storybook.js"
+    },
+    "devDependencies": {
+        "@tailwindcss/cli": "^4.3.0",
+        "alpinejs": "^3.17.0",
+        "esbuild": "^0.25.0",
+        "tailwindcss": "^4.3.0"
+    }
+}
