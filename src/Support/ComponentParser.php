@@ -33,7 +33,8 @@ final class ComponentParser
     public function __construct(private readonly TagNameResolver $tagNames) {}
 
     /**
-     * @param class-string $class
+     * @param  class-string  $class
+     *
      * @throws \ReflectionException
      */
     public function parse(string $class): ?ComponentMetadata

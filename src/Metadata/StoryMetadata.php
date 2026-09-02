@@ -14,8 +14,8 @@ final readonly class StoryMetadata
      */
     public function __construct(
         public string $name,
-        public array  $props = [],
-        public array  $slots = [],
+        public array $props = [],
+        public array $slots = [],
     ) {}
 
     public function id(): string

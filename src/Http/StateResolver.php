@@ -23,7 +23,7 @@ final class StateResolver
         $slots = $request->array('slots');
 
         $story = $request->string('story')->toString();
-        $story = !empty($story) ? $story : $component->stories()->first()?->id();
+        $story = ! empty($story) ? $story : $component->stories()->first()?->id();
 
         return ComponentState::resolve($component, $story, $props, $slots);
     }
