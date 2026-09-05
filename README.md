@@ -1,5 +1,7 @@
 # Blade Storybook
 
+PACKAGE IS STILL IN DEVELOPMENT AND NOT PUBLISHED JUST YET
+
 A storybook-style preview interface for class-based Blade components, driven by PHP attributes.
 
 ## Installation
