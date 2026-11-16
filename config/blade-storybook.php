@@ -51,6 +51,13 @@ return [
     | The Vite entry points loaded inside the preview iframe, so components
     | look exactly as they do in the application, plus the classes applied to
     | the preview body.
+    |
+    | "head" and "scripts" add markup that your layout loads outside of Vite,
+    | such as web fonts or a CDN build of Alpine. "head" goes into <head>,
+    | "scripts" at the end of <body>. Use a view name or a raw HTML string.
+    |
+    | "livewire" adds Livewire's styles and scripts (which include Alpine)
+    | when Livewire is installed, so Alpine-driven components work.
     */
     'preview' => [
         'assets' => [
@@ -58,7 +65,30 @@ return [
             'resources/js/app.js',
         ],
 
+        'head' => null,
+
+        'scripts' => null,
+
+        'livewire' => true,
+
         'body_class' => 'p-8',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database rollback
+    |--------------------------------------------------------------------------
+    |
+    | Stories should build their data with make(), but a factory that still
+    | creates a related model (a "user_id" => User::factory() in a definition)
+    | would add a row on every page load. Each storybook request therefore
+    | runs inside a transaction that is always rolled back. List every
+    | connection your stories may write to; null is the default connection.
+    */
+    'rollback' => [
+        'enabled' => true,
+
+        'connections' => [null],
     ],
 
     /*

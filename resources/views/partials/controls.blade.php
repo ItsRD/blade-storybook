@@ -14,6 +14,18 @@
         </select>
     </div>
 
+    <div>
+        <p class="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Container</p>
+
+        <label class="mb-1 flex items-baseline justify-between text-xs font-medium text-slate-700">
+            <span>width</span>
+            <span class="font-mono text-[10px] text-slate-400">px, %, rem, em, vw, ch</span>
+        </label>
+        <input type="text" x-model.debounce.400ms="width" placeholder="Full width, e.g. 320 or 50%"
+               class="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm">
+        <p class="mt-1 text-[11px] text-slate-500">The width of the parent the component sits in.</p>
+    </div>
+
     @if ($component->props()->contains->isControllable())
         <div>
             <p class="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">Props</p>
@@ -81,10 +93,9 @@
         </div>
     @endif
 
-    @if ($component->blockingProps()->isNotEmpty())
+    @if ($reason = $state->blockingReason())
         <div class="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
-            Cannot be previewed. These props need values that are not literals:
-            {{ $component->blockingProps()->map->name->implode(', ') }}.
+            Cannot be previewed. {{ $reason }}
         </div>
     @endif
 </aside>

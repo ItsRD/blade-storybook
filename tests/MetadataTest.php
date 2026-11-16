@@ -5,10 +5,12 @@ declare(strict_types=1);
 use ItsRD\BladeStorybook\Facades\Storybook;
 use ItsRD\BladeStorybook\Metadata\ComponentMetadata;
 use ItsRD\BladeStorybook\Metadata\ControlType;
+use ItsRD\BladeStorybook\Rendering\ComponentRenderer;
 use ItsRD\BladeStorybook\Rendering\ComponentState;
 use ItsRD\BladeStorybook\StorybookRegistry;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureButton;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureCard;
+use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureInput;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\PlainComponent;
 
 it('only registers components marked with the storybook attribute', function (): void {
@@ -57,7 +59,7 @@ it('falls back to a single default story and keeps declared slots', function ():
     $button = Storybook::find(str_replace('\\', '.', FixtureButton::class));
     $card = Storybook::find(str_replace('\\', '.', FixtureCard::class));
 
-    expect($button->stories()->map->name->all())->toBe(['Primary', 'Secondary small'])
+    expect($button->stories()->map->name->all())->toBe(['Primary', 'Secondary small', 'With nested component'])
         ->and($button->slots()->map->name->all())->toBe(['default', 'footer'])
         ->and($card->stories()->map->name->all())->toBe(['Default']);
 });
@@ -110,10 +112,36 @@ it('keeps a nullable prop null when its control is cleared', function (): void {
         ->and($state->changedProps())->not->toHaveKey('href');
 });
 
+it('supports props typed as false|string', function (): void {
+    $component = Storybook::find(str_replace('\\', '.', FixtureInput::class));
+    $prefix = $component->prop('prefix');
+
+    expect($prefix->isLiteral())->toBeTrue()
+        ->and($prefix->control)->toBe(ControlType::Text)
+        ->and($component->isRenderable())->toBeTrue();
+
+    $default = ComponentState::resolve($component);
+    expect($default->props['prefix'])->toBeFalse()
+        ->and($default->controlValues()['prefix'])->toBe('');
+
+    $story = ComponentState::resolve($component, 'with-prefix');
+    expect($story->props['prefix'])->toBe('https://');
+
+    $typed = ComponentState::resolve($component, null, ['prefix' => 'EUR']);
+    expect($typed->props['prefix'])->toBe('EUR');
+
+    $cleared = ComponentState::resolve($component, 'with-prefix', ['prefix' => '']);
+    expect($cleared->props['prefix'])->toBeFalse()
+        ->and($cleared->changedProps())->not->toHaveKey('prefix');
+
+    expect(app(ComponentRenderer::class)->render($story))->toContain('data-prefix="https://"')
+        ->and(app(ComponentRenderer::class)->render($default))->toContain('data-prefix="none"');
+});
+
 it('sorts components by category and then by name', function (): void {
     expect(app(StorybookRegistry::class)->all()
         ->map(fn (ComponentMetadata $component): string => $component->category.'/'.$component->name)
         ->values()
         ->all()
-    )->toBe(['Cards/Fixture Card', 'Forms/Fixture button']);
+    )->toBe(['Cards/Fixture Card', 'Forms/Fixture button', 'Forms/Fixture input', 'Profiles/Fixture profile']);
 });

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Blade;
 use ItsRD\BladeStorybook\BladeStorybookServiceProvider;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureButton;
 use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureCard;
+use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureInput;
+use ItsRD\BladeStorybook\Tests\Fixtures\Components\FixtureProfile;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -18,6 +20,8 @@ abstract class TestCase extends Orchestra
 
         Blade::component('fixture-button', FixtureButton::class);
         Blade::component('fixture-card', FixtureCard::class);
+        Blade::component('fixture-input', FixtureInput::class);
+        Blade::component('fixture-profile', FixtureProfile::class);
     }
 
     /**

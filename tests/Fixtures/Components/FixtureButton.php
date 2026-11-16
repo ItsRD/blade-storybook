@@ -13,6 +13,9 @@ use ItsRD\BladeStorybook\Attributes\Storybook;
 #[Storybook(category: 'Forms', name: 'Fixture button', description: 'A button used in tests.')]
 #[Story('Primary', ['variant' => 'primary'])]
 #[Story('Secondary small', ['variant' => 'secondary', 'size' => 2, 'meta' => ['role' => 'cancel']], ['default' => 'Annuleren'])]
+#[Story('With nested component', slots: ['footer' => '
+    <x-fixture-input prefix="nested" />
+'])]
 #[Slot('default', default: 'Opslaan')]
 #[Slot('footer', default: 'Footer')]
 final class FixtureButton extends Component

@@ -33,26 +33,57 @@ final readonly class PreviewController
 
         $state = $stateResolver->resolve($component, $request);
         $html = null;
-        $error = null;
+        $error = $state->blockingReason();
 
-        if ($component->isRenderable()) {
+        if ($error === null) {
             try {
                 $html = $componentRenderer->render($state);
             } catch (Throwable $exception) {
                 $error = $exception->getMessage();
             }
-        } else {
-            $error = sprintf(
-                'This component needs values that cannot be expressed in the storybook: %s.',
-                $component->blockingProps()->map->name->implode(', ')
-            );
         }
 
         return $this->views->make('blade-storybook::preview', [
             'component' => $component,
             'html' => $html,
+            'width' => $state->width,
             'error' => $error,
+            'head' => $this->livewireAssets('styles').$this->markup(config('blade-storybook.preview.head')),
+            'scripts' => $this->livewireAssets('scripts').$this->markup(config('blade-storybook.preview.scripts')),
         ]);
+    }
+
+    /**
+     * Resolves a configured view name or raw HTML string into markup.
+     */
+    private function markup(mixed $value): string
+    {
+        if (! is_string($value) || $value === '') {
+            return '';
+        }
+
+        if (! str_contains($value, '<') && $this->views->exists($value)) {
+            return $this->views->make($value)->render();
+        }
+
+        return $value;
+    }
+
+    /**
+     * Livewire ships Alpine, but only injects it on pages that render a
+     * Livewire component. The preview usually does not, so add it here.
+     *
+     * @param  'styles'|'scripts'  $type
+     */
+    private function livewireAssets(string $type): string
+    {
+        $assets = 'Livewire\Mechanisms\FrontendAssets\FrontendAssets';
+
+        if (! config('blade-storybook.preview.livewire', true) || ! class_exists($assets)) {
+            return '';
+        }
+
+        return (string) $assets::$type();
     }
 
     /**

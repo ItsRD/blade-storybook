@@ -18,5 +18,6 @@ final class Storybook
         public string $category,
         public ?string $name = null,
         public ?string $description = null,
+        public ?string $width = null,
     ) {}
 }

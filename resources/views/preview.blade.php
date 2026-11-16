@@ -16,6 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>{{ $component->name }}</title>
+    {!! $head !!}
     {!! $viteTags !!}
 </head>
 <body class="{{ config('blade-storybook.preview.body_class', 'p-8') }}">
@@ -29,8 +30,14 @@
         <div style="padding:.75rem 1rem;border-radius:.5rem;background:#fee2e2;color:#991b1b;font:13px/1.5 ui-monospace,monospace">
             {{ $error }}
         </div>
+    @elseif ($width)
+        <div data-storybook-container style="width: {{ $width }}; outline: 1px dashed rgba(148, 163, 184, .6); outline-offset: 4px;">
+            {!! $html !!}
+        </div>
     @else
         {!! $html !!}
     @endif
+
+    {!! $scripts !!}
 </body>
 </html>

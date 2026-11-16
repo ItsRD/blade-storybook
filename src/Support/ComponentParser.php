@@ -14,6 +14,7 @@ use ItsRD\BladeStorybook\Metadata\ControlType;
 use ItsRD\BladeStorybook\Metadata\PropMetadata;
 use ItsRD\BladeStorybook\Metadata\SlotMetadata;
 use ItsRD\BladeStorybook\Metadata\StoryMetadata;
+use ItsRD\BladeStorybook\Rendering\PreviewWidth;
 use ReflectionClass;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
@@ -28,7 +29,7 @@ final class ComponentParser
 {
     private const CONTROLLABLE_TYPES = ['string', 'int', 'float', 'bool'];
 
-    private const LITERAL_TYPES = ['string', 'int', 'float', 'bool', 'array', 'null', 'mixed', 'iterable'];
+    private const LITERAL_TYPES = ['string', 'int', 'float', 'bool', 'false', 'true', 'array', 'null', 'mixed', 'iterable'];
 
     public function __construct(private readonly TagNameResolver $tagNames) {}
 
@@ -59,6 +60,7 @@ final class ComponentParser
             unmanagedProps: $this->props($reflection, declared: false),
             stories: $this->stories($reflection),
             slots: $this->slots($reflection),
+            width: PreviewWidth::normalize($storybook->width),
         );
     }
 
@@ -125,8 +127,14 @@ final class ComponentParser
             return ControlType::Select;
         }
 
+        // The standalone false and true types are bools as far as controls go.
+        $normalized = array_values(array_unique(array_map(
+            fn (string $type): string => in_array($type, ['false', 'true'], true) ? 'bool' : $type,
+            $typeNames
+        )));
+
         $controllable = array_values(array_filter(
-            $typeNames,
+            $normalized,
             fn (string $type): bool => in_array($type, self::CONTROLLABLE_TYPES, true)
         ));
 
@@ -215,6 +223,8 @@ final class ComponentParser
             name: $story->name,
             props: $story->props,
             slots: array_map(fn (mixed $value): string => (string) $value, $story->slots),
+            using: $story->using,
+            width: PreviewWidth::normalize($story->width),
         );
     }
 

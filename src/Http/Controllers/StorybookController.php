@@ -46,6 +46,7 @@ final readonly class StorybookController
             'story' => $state->storyId,
             'props' => (object) $state->controlValues(),
             'slots' => (object) $state->slots,
+            'width' => $state->width ?? '',
             'stories' => $component->stories()
                 ->mapWithKeys(function (StoryMetadata $story) use ($component): array {
                     $storyState = ComponentState::resolve($component, $story->id());
@@ -53,6 +54,7 @@ final readonly class StorybookController
                     return [$story->id() => [
                         'props' => (object) $storyState->controlValues(),
                         'slots' => (object) $storyState->slots,
+                        'width' => $storyState->width ?? '',
                     ]];
                 })
                 ->all(),

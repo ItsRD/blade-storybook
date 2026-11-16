@@ -7,7 +7,9 @@ namespace ItsRD\BladeStorybook\Attributes;
 use Attribute;
 
 /**
- * Declares an editable slot with its starting value. Plain text only.
+ * Declares an editable slot with its starting value. The value is compiled
+ * as Blade, so it can contain components; edits made in the controls are
+ * shown as plain text.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class Slot

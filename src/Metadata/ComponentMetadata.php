@@ -25,6 +25,7 @@ final readonly class ComponentMetadata
         public array $unmanagedProps,
         public array $stories,
         public array $slots,
+        public ?string $width = null,
     ) {}
 
     /**
@@ -96,14 +97,45 @@ final readonly class ComponentMetadata
      * Props without a value the storybook can supply, which makes the
      * component impossible to render: a required prop that needs an object,
      * or a required constructor parameter that was never marked with #[Prop].
+     * A story that sets such a prop, inline with `new` or through its $using
+     * method, supplies it and unblocks the component.
      *
+     * @param  array<string, mixed>  $provided  Prop values a story supplies.
      * @return Collection<int, PropMetadata>
      */
-    public function blockingProps(): Collection
+    public function blockingProps(array $provided = []): Collection
     {
         return $this->allProps()
             ->filter(fn (PropMetadata $prop): bool => $prop->isRequired())
             ->filter(fn (PropMetadata $prop): bool => ! $prop->isLiteral() || ! $this->isDeclared($prop))
+            ->reject(fn (PropMetadata $prop): bool => array_key_exists($prop->name, $provided))
+            ->values();
+    }
+
+    /**
+     * Whether at least one story can be rendered. Runs every $using method.
+     */
+    public function isRenderable(): bool
+    {
+        return $this->renderableStories()->isNotEmpty();
+    }
+
+    /**
+     * The stories that can be rendered. Runs every $using method; a story
+     * whose method fails counts as not renderable.
+     *
+     * @return Collection<int, StoryMetadata>
+     */
+    public function renderableStories(): Collection
+    {
+        return $this->stories()
+            ->filter(function (StoryMetadata $story): bool {
+                try {
+                    return $this->blockingProps($story->resolveProps())->isEmpty();
+                } catch (\Throwable) {
+                    return false;
+                }
+            })
             ->values();
     }
 
@@ -112,13 +144,8 @@ final readonly class ComponentMetadata
         return $this->props()->contains(fn (PropMetadata $declared): bool => $declared->name === $prop->name);
     }
 
-    public function isRenderable(): bool
-    {
-        return $this->blockingProps()->isEmpty();
-    }
-
     /**
-     * @return array{id: string, class: string, tag: string, name: string, category: string, description: string|null, renderable: bool, props: list<array<string, mixed>>, stories: list<array<string, mixed>>, slots: list<array<string, string>>}
+     * @return array{id: string, class: string, tag: string, name: string, category: string, description: string|null, renderable: bool, props: list<array<string, mixed>>, stories: list<array<string, mixed>>, slots: list<array<string, string>>, width: string|null}
      */
     public function toArray(): array
     {
@@ -133,6 +160,7 @@ final readonly class ComponentMetadata
             'props' => $this->props()->map->toArray()->all(),
             'stories' => $this->stories()->map->toArray()->all(),
             'slots' => $this->slots()->map->toArray()->all(),
+            'width' => $this->width,
         ];
     }
 }

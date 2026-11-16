@@ -41,6 +41,22 @@ final readonly class PropMetadata
         return in_array('null', explode('|', $this->type), true);
     }
 
+    /**
+     * Whether false is a valid value, through bool or the standalone false type.
+     */
+    public function acceptsFalse(): bool
+    {
+        return array_intersect(['bool', 'false'], explode('|', $this->type)) !== [];
+    }
+
+    /**
+     * Whether false is carried as an empty text field, as with false|string.
+     */
+    public function usesEmptyTextForFalse(): bool
+    {
+        return $this->control === ControlType::Text && $this->acceptsFalse() && ! $this->isNullable();
+    }
+
     public function isRequired(): bool
     {
         return ! $this->hasDefault;

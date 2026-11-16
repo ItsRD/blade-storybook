@@ -8,6 +8,8 @@ window.storybook = (config) => ({
     stories: config.stories ?? {},
     props: { ...config.props },
     slots: { ...config.slots },
+    storySlots: { ...(config.stories?.[config.story]?.slots ?? config.slots) },
+    width: config.width ?? '',
     viewport: null,
 
     init() {
@@ -29,8 +31,14 @@ window.storybook = (config) => ({
         })
 
         Object.entries(this.slots).forEach(([name, value]) => {
+            if (value === this.storySlots[name]) {
+                return
+            }
+
             params.set(`slots[${name}]`, String(value ?? ''))
         })
+
+        params.set('width', String(this.width ?? '').trim())
 
         return params
     },
@@ -50,6 +58,8 @@ window.storybook = (config) => ({
 
         this.props = { ...story.props }
         this.slots = { ...story.slots }
+        this.storySlots = { ...story.slots }
+        this.width = story.width ?? ''
     },
 
     syncUrl() {

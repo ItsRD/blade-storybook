@@ -25,6 +25,8 @@ final class StateResolver
         $story = $request->string('story')->toString();
         $story = ! empty($story) ? $story : $component->stories()->first()?->id();
 
-        return ComponentState::resolve($component, $story, $props, $slots);
+        $width = $request->has('width') ? $request->string('width')->toString() : null;
+
+        return ComponentState::resolve($component, $story, $props, $slots, $width);
     }
 }
